@@ -6,7 +6,7 @@
 
 ## A2A协议合规性
 
-### 完全符合标准A2A协议
+### 符合标准A2A协议
 
 1. **JSON-RPC 2.0格式** - 使用标准JSON-RPC协议
 2. **标准AgentCard** - 符合A2A协议的AgentCard格式
