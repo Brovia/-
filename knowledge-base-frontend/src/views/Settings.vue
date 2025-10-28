@@ -98,7 +98,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { knowledgeService, adminService } from '@/services/api'
+import { knowledgeService, adminService, recreateApiClient } from '@/services/api'
 
 // 响应式数据
 const savingApi = ref(false)
@@ -132,6 +132,9 @@ const saveApiSettings = async () => {
     
     // 保存到localStorage
     localStorage.setItem('apiSettings', JSON.stringify(apiSettings))
+    
+    // 重新创建API客户端以使用新的API地址
+    recreateApiClient()
     
     ElMessage.success('API设置保存成功')
     
