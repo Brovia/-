@@ -7,10 +7,24 @@ import axios from 'axios'
 import { ElMessage, ElLoading } from 'element-plus'
 import { APP_CONFIG, API_ENDPOINTS, REQUEST_CONFIG, ERROR_MESSAGES, isDebugEnabled } from '@/config/env.js'
 
+// 获取动态API地址
+const getApiBaseUrl = () => {
+  try {
+    const savedApiSettings = localStorage.getItem('apiSettings')
+    if (savedApiSettings) {
+      const settings = JSON.parse(savedApiSettings)
+      return settings.apiUrl || APP_CONFIG.apiBaseUrl
+    }
+  } catch (error) {
+    console.warn('Failed to parse API settings from localStorage:', error)
+  }
+  return APP_CONFIG.apiBaseUrl
+}
+
 // 创建axios实例
 const createApiClient = () => {
   const client = axios.create({
-    baseURL: `${APP_CONFIG.apiBaseUrl}/api/${APP_CONFIG.apiVersion}`,
+    baseURL: `${getApiBaseUrl()}/api/${APP_CONFIG.apiVersion}`,
     timeout: REQUEST_CONFIG.timeout,
     headers: REQUEST_CONFIG.headers,
   })
@@ -119,7 +133,13 @@ const createApiClient = () => {
 }
 
 // 创建API客户端实例
-const apiClient = createApiClient()
+let apiClient = createApiClient()
+
+// 重新创建API客户端（用于更新API地址）
+const recreateApiClient = () => {
+  apiClient = createApiClient()
+  return apiClient
+}
 
 // 通用请求方法
 const request = {
@@ -226,7 +246,7 @@ export const apiServices = {
 }
 
 // 导出API客户端和请求方法
-export { apiClient, request }
+export { apiClient, request, recreateApiClient }
 
 // 默认导出
 export default {
@@ -234,4 +254,5 @@ export default {
   admin: adminService,
   client: apiClient,
   request,
+  recreateApiClient,
 }
